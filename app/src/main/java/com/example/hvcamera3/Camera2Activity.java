@@ -29,6 +29,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
@@ -58,6 +59,8 @@ public class Camera2Activity extends AppCompatActivity {
     private CaptureRequest.Builder captureRequestBuilder;
     private CaptureRequest captureRequest;
     private ImageButton captureButton;
+    private ProgressBar progressBar;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -75,6 +78,7 @@ public class Camera2Activity extends AppCompatActivity {
 
         textureView = (TextureView) findViewById(R.id.texture_view);
         captureButton = (ImageButton) findViewById(R.id.capture_button);
+        progressBar = (ProgressBar) findViewById(R.id.loading_circle);
         textureView.setVisibility(View.VISIBLE);
 
         surfaceTextureListener = new TextureView.SurfaceTextureListener() {
@@ -105,6 +109,8 @@ public class Camera2Activity extends AppCompatActivity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                progressBar.setVisibility(View.VISIBLE);
 
                 File pictureFileDir = new File(getCacheDir()+File.separator+"images");
                 Log.d("path",""+pictureFileDir);
@@ -137,6 +143,7 @@ public class Camera2Activity extends AppCompatActivity {
                 Intent intent = new Intent(Camera2Activity.this, ReviewActivity.class);
                 intent.putExtra("imagePath", pictureFile.getPath());
                 intent.putExtra("version", 2);
+                progressBar.setVisibility(View.GONE);
                 startActivity(intent);
 //                lock();
 //                FileOutputStream outputPhoto = null;

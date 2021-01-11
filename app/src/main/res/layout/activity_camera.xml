@@ -18,7 +18,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_margin="16dp"
             app:cardCornerRadius="25dp"
             app:cardElevation="6dp">
@@ -44,11 +44,18 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/loading_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_margin="25dp">
 
         <LinearLayout
@@ -70,8 +77,8 @@
                     android:id="@+id/flip_camera_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:src="@drawable/ic_flip_camera_black"/>
+                    android:background="@drawable/button_shape"
+                    android:src="@drawable/ic_flip_camera_black" />
 
             </androidx.cardview.widget.CardView>
 
@@ -96,7 +103,7 @@
                     android:id="@+id/capture_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
+                    android:background="@drawable/button_shape"
                     android:src="@drawable/ic_photo_camera_black"/>
 
             </androidx.cardview.widget.CardView>
@@ -122,7 +129,7 @@
                     android:id="@+id/toggle_flash_button"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
+                    android:background="@drawable/button_shape"
                     android:src="@drawable/ic_flash_on_black_24dp"/>
 
             </androidx.cardview.widget.CardView>
