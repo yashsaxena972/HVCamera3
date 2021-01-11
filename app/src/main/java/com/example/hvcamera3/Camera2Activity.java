@@ -29,6 +29,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.ByteArrayInputStream;
@@ -60,6 +61,9 @@ public class Camera2Activity extends AppCompatActivity {
     private ImageButton captureButton, flipCameraButton, flashButton;
     private boolean isFlashSupported;
     private boolean isTorchOn = false;
+    private ImageButton captureButton;
+    private ProgressBar progressBar;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -77,6 +81,7 @@ public class Camera2Activity extends AppCompatActivity {
 
         textureView = (TextureView) findViewById(R.id.texture_view);
         captureButton = (ImageButton) findViewById(R.id.capture_button);
+        progressBar = (ProgressBar) findViewById(R.id.loading_circle);
         flipCameraButton = findViewById(R.id.flip_camera_button);
         flashButton = findViewById(R.id.toggle_flash_button);
         textureView.setVisibility(View.VISIBLE);
@@ -142,7 +147,8 @@ public class Camera2Activity extends AppCompatActivity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Camera2Activity.this, "Image is being saved", Toast.LENGTH_SHORT).show();
+
+                progressBar.setVisibility(View.VISIBLE);
 
                 File pictureFileDir = new File(getCacheDir()+File.separator+"images");
                 Log.d("path",""+pictureFileDir);
@@ -162,14 +168,12 @@ public class Camera2Activity extends AppCompatActivity {
                     FileOutputStream fos = new FileOutputStream(pictureFile);
                     textureView.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.close();
-                    Toast.makeText(Camera2Activity.this,
-                            "Image has been saved at " + photoFile,
-                            Toast.LENGTH_SHORT).show();
+                    //                        Toast.makeText(MainActivity.this, "New Image saved:" + photoFile,
+                    //                                Toast.LENGTH_LONG).show();
                 } catch (Exception error) {
                     Log.d("tag", "File" + filename + "not saved: "
                             + error.getMessage());
-                    Toast.makeText(Camera2Activity.this,
-                            "Image could not be saved.",
+                    Toast.makeText(Camera2Activity.this, "Image could not be saved.",
                             Toast.LENGTH_LONG).show();
                 }
 
@@ -177,6 +181,7 @@ public class Camera2Activity extends AppCompatActivity {
                 Intent intent = new Intent(Camera2Activity.this, ReviewActivity.class);
                 intent.putExtra("imagePath", pictureFile.getPath());
                 intent.putExtra("version", 2);
+                progressBar.setVisibility(View.GONE);
                 startActivity(intent);
 //                lock();
 //                FileOutputStream outputPhoto = null;
