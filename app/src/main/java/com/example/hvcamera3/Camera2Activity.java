@@ -57,7 +57,9 @@ public class Camera2Activity extends AppCompatActivity {
     private CameraCaptureSession cameraCaptureSession;
     private CaptureRequest.Builder captureRequestBuilder;
     private CaptureRequest captureRequest;
-    private ImageButton captureButton, flipCameraButton;
+    private ImageButton captureButton, flipCameraButton, flashButton;
+    private boolean isFlashSupported;
+    private boolean isTorchOn = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -76,6 +78,7 @@ public class Camera2Activity extends AppCompatActivity {
         textureView = (TextureView) findViewById(R.id.texture_view);
         captureButton = (ImageButton) findViewById(R.id.capture_button);
         flipCameraButton = findViewById(R.id.flip_camera_button);
+        flashButton = findViewById(R.id.toggle_flash_button);
         textureView.setVisibility(View.VISIBLE);
         flipCameraButton.setOnClickListener(v->{
             if(cameraFacing == (CameraCharacteristics.LENS_FACING_BACK)){
@@ -87,6 +90,29 @@ public class Camera2Activity extends AppCompatActivity {
             setUpCamera();
             openCamera();
         });
+        flashButton.setOnClickListener(v->{
+            try {
+                if (cameraId.equals(CameraCharacteristics.LENS_FACING_BACK)) {
+                    if (isFlashSupported) {
+                        if (isTorchOn) {
+                            mPreviewBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+                            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
+                            flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
+                            isTorchOn = false;
+                        } else {
+                            mPreviewBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
+                            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
+                            flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
+                            isTorchOn = true;
+                        }
+                    }
+                }
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        });
+
+//        setupFlashButton();
 
         surfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
@@ -208,6 +234,8 @@ public class Camera2Activity extends AppCompatActivity {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 CameraCharacteristics cameraCharacteristics =
                         cameraManager.getCameraCharacteristics(cameraId);
+                Boolean available = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                isFlashSupported = available == null ? false : available;
                 if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) ==
                         cameraFacing) {
                     StreamConfigurationMap streamConfigurationMap = cameraCharacteristics.get(
@@ -256,6 +284,21 @@ public class Camera2Activity extends AppCompatActivity {
             backgroundThread.quitSafely();
             backgroundThread = null;
             backgroundHandler = null;
+        }
+    }
+
+    public void setupFlashButton() {
+        if (cameraId.equals(CameraCharacteristics.LENS_FACING_BACK) && isFlashSupported) {
+            flashButton.setVisibility(View.VISIBLE);
+
+            if (isTorchOn) {
+                flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
+            } else {
+                flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
+            }
+
+        } else {
+            flashButton.setVisibility(View.GONE);
         }
     }
 
