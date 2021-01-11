@@ -116,6 +116,7 @@ public class Camera2Activity extends AppCompatActivity {
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Camera2Activity.this, "Image is being saved", Toast.LENGTH_SHORT).show();
 
                 File pictureFileDir = new File(getCacheDir()+File.separator+"images");
                 Log.d("path",""+pictureFileDir);
@@ -135,12 +136,14 @@ public class Camera2Activity extends AppCompatActivity {
                     FileOutputStream fos = new FileOutputStream(pictureFile);
                     textureView.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.close();
-                    //                        Toast.makeText(MainActivity.this, "New Image saved:" + photoFile,
-                    //                                Toast.LENGTH_LONG).show();
+                    Toast.makeText(Camera2Activity.this,
+                            "Image has been saved at " + photoFile,
+                            Toast.LENGTH_SHORT).show();
                 } catch (Exception error) {
                     Log.d("tag", "File" + filename + "not saved: "
                             + error.getMessage());
-                    Toast.makeText(Camera2Activity.this, "Image could not be saved.",
+                    Toast.makeText(Camera2Activity.this,
+                            "Image could not be saved.",
                             Toast.LENGTH_LONG).show();
                 }
 
