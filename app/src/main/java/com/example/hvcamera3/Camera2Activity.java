@@ -59,9 +59,9 @@ public class Camera2Activity extends AppCompatActivity {
     private CaptureRequest.Builder captureRequestBuilder;
     private CaptureRequest captureRequest;
     private ImageButton captureButton, flipCameraButton, flashButton;
-    private boolean isFlashSupported;
+    private CameraCharacteristics cameraCharacteristics;
+    private boolean isFlashSupported = false;
     private boolean isTorchOn = false;
-    private ImageButton captureButton;
     private ProgressBar progressBar;
 
 
@@ -96,28 +96,8 @@ public class Camera2Activity extends AppCompatActivity {
             openCamera();
         });
         flashButton.setOnClickListener(v->{
-            try {
-                if (cameraId.equals(CameraCharacteristics.LENS_FACING_BACK)) {
-                    if (isFlashSupported) {
-                        if (isTorchOn) {
-                            mPreviewBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
-                            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
-                            flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
-                            isTorchOn = false;
-                        } else {
-                            mPreviewBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
-                            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
-                            flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
-                            isTorchOn = true;
-                        }
-                    }
-                }
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+            switchFlash();
         });
-
-//        setupFlashButton();
 
         surfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
@@ -237,7 +217,7 @@ public class Camera2Activity extends AppCompatActivity {
     private void setUpCamera() {
         try {
             for (String cameraId : cameraManager.getCameraIdList()) {
-                CameraCharacteristics cameraCharacteristics =
+                cameraCharacteristics =
                         cameraManager.getCameraCharacteristics(cameraId);
                 Boolean available = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 isFlashSupported = available == null ? false : available;
@@ -292,18 +272,30 @@ public class Camera2Activity extends AppCompatActivity {
         }
     }
 
-    public void setupFlashButton() {
-        if (cameraId.equals(CameraCharacteristics.LENS_FACING_BACK) && isFlashSupported) {
-            flashButton.setVisibility(View.VISIBLE);
-
-            if (isTorchOn) {
-                flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
-            } else {
-                flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
-            }
-
-        } else {
-            flashButton.setVisibility(View.GONE);
+    public void switchFlash(){
+        try {
+//            if (cameraFacing == (CameraCharacteristics.LENS_FACING_BACK)) {
+                if (isFlashSupported) {
+                    Toast.makeText(this, "flash Is supported", Toast.LENGTH_SHORT).show();
+                    if (isTorchOn) {
+                        Toast.makeText(this, "torch is on", Toast.LENGTH_SHORT).show();
+                        captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
+                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
+                        flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
+                        isTorchOn = false;
+                    } else {
+                        captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
+                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
+                        flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
+                        isTorchOn = true;
+                    }
+                }
+                else{
+                    Toast.makeText(this, "flash is not supported", Toast.LENGTH_SHORT).show();
+                }
+//            }
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
         }
     }
 
