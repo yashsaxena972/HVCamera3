@@ -57,7 +57,7 @@ public class Camera2Activity extends AppCompatActivity {
     private CameraCaptureSession cameraCaptureSession;
     private CaptureRequest.Builder captureRequestBuilder;
     private CaptureRequest captureRequest;
-    private ImageButton captureButton;
+    private ImageButton captureButton, flipCameraButton;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -75,7 +75,18 @@ public class Camera2Activity extends AppCompatActivity {
 
         textureView = (TextureView) findViewById(R.id.texture_view);
         captureButton = (ImageButton) findViewById(R.id.capture_button);
+        flipCameraButton = findViewById(R.id.flip_camera_button);
         textureView.setVisibility(View.VISIBLE);
+        flipCameraButton.setOnClickListener(v->{
+            if(cameraFacing == (CameraCharacteristics.LENS_FACING_BACK)){
+                cameraFacing = CameraCharacteristics.LENS_FACING_FRONT;
+            }
+            else{
+                cameraFacing = CameraCharacteristics.LENS_FACING_BACK;
+            }
+            setUpCamera();
+            openCamera();
+        });
 
         surfaceTextureListener = new TextureView.SurfaceTextureListener() {
 
