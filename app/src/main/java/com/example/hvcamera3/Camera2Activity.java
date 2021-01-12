@@ -219,8 +219,6 @@ public class Camera2Activity extends AppCompatActivity {
             for (String cameraId : cameraManager.getCameraIdList()) {
                 cameraCharacteristics =
                         cameraManager.getCameraCharacteristics(cameraId);
-                Boolean available = cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                isFlashSupported = available == null ? false : available;
                 if (cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) ==
                         cameraFacing) {
                     StreamConfigurationMap streamConfigurationMap = cameraCharacteristics.get(
@@ -273,30 +271,7 @@ public class Camera2Activity extends AppCompatActivity {
     }
 
     public void switchFlash(){
-        try {
-//            if (cameraFacing == (CameraCharacteristics.LENS_FACING_BACK)) {
-                if (isFlashSupported) {
-                    Toast.makeText(this, "flash Is supported", Toast.LENGTH_SHORT).show();
-                    if (isTorchOn) {
-                        Toast.makeText(this, "torch is on", Toast.LENGTH_SHORT).show();
-                        captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
-                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
-                        flashButton.setImageResource(R.drawable.ic_baseline_flash_off_24);
-                        isTorchOn = false;
-                    } else {
-                        captureRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
-                        cameraCaptureSession.setRepeatingRequest(captureRequestBuilder.build(), null, null);
-                        flashButton.setImageResource(R.drawable.ic_flash_on_black_24dp);
-                        isTorchOn = true;
-                    }
-                }
-                else{
-                    Toast.makeText(this, "flash is not supported", Toast.LENGTH_SHORT).show();
-                }
-//            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+
     }
 
 
